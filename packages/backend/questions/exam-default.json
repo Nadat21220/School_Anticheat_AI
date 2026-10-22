@@ -1,0 +1,42 @@
+[
+  {
+    "id": "q-001",
+    "prompt": "¿Cuál de las siguientes APIs del navegador permite capturar la pantalla completa del usuario?",
+    "choices": [
+      "navigator.mediaDevices.getDisplayMedia",
+      "navigator.mediaDevices.getUserMedia",
+      "document.requestFullscreen",
+      "navigator.clipboard.read"
+    ],
+    "correctChoiceIndex": 0,
+    "secondsAllowed": 60
+  },
+  {
+    "id": "q-002",
+    "prompt": "¿Qué valor de `track.getSettings().displaySurface` debe exigirse para aceptar que se comparte el monitor completo?",
+    "choices": ["\"window\"", "\"browser\"", "\"monitor\"", "\"application\""],
+    "correctChoiceIndex": 2,
+    "secondsAllowed": 60
+  },
+  {
+    "id": "q-003",
+    "prompt": "¿Qué API garantiza la entrega de un payload de infracción incluso si la pestaña se cierra inmediatamente después?",
+    "choices": ["fetch con keepalive", "XMLHttpRequest síncrono", "navigator.sendBeacon", "WebSocket.send"],
+    "correctChoiceIndex": 2,
+    "secondsAllowed": 60
+  },
+  {
+    "id": "q-004",
+    "prompt": "¿Qué evento del DOM se dispara al minimizar la ventana o cambiar de pestaña?",
+    "choices": ["window.onblur", "document.onvisibilitychange", "document.onfullscreenchange", "track.onended"],
+    "correctChoiceIndex": 1,
+    "secondsAllowed": 60
+  },
+  {
+    "id": "q-005",
+    "prompt": "¿Qué propiedad de `window.screen` permite detectar si hay más de un monitor conectado?",
+    "choices": ["screen.isExtended", "screen.colorDepth", "screen.orientation", "screen.availWidth"],
+    "correctChoiceIndex": 0,
+    "secondsAllowed": 60
+  }
+]

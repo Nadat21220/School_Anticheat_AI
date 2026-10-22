@@ -1,0 +1,113 @@
+{
+  "proyecto": "Sistema Web Proctoring de Tolerancia Cero",
+  "fecha_ultima_actualizacion": "2026-10-21",
+  "fase_actual": "Fase 0 - Fundacion del proyecto",
+  "decision_en_curso": null,
+  "estructura_carpetas_confirmada": true,
+  "decisiones_confirmadas": [
+    {
+      "id": "ADR-001",
+      "titulo": "Stack Backend e infraestructura de recepcion de streaming/alertas",
+      "eleccion": "Node.js + TypeScript + Fastify + @fastify/websocket"
+    },
+    {
+      "id": "ADR-002",
+      "titulo": "Arquitectura de ingesta de chunks de video (.webm)",
+      "eleccion": "WebSocket binario (mismo canal) + fs.createWriteStream append por sesion"
+    },
+    {
+      "id": "ADR-003",
+      "titulo": "Framing y priorizacion dentro del WebSocket unico",
+      "eleccion": "Prefijo de 1 byte (0x00 control / 0x01 video) + chunks troceados <=64KB"
+    },
+    {
+      "id": "ADR-004",
+      "titulo": "Motor de aleatorizacion y entrega secuencial de preguntas (server-side truth)",
+      "eleccion": "Estado de sesion en memoria del proceso + persistencia periodica a disco/DB"
+    },
+    {
+      "id": "ADR-005",
+      "titulo": "Umbrales y configuracion de MediaPipe",
+      "eleccion": "Un solo pipeline secuencial por frame (FaceLandmarker + ObjectDetector), baja resolucion, muestreo 500ms-1s"
+    },
+    {
+      "id": "ADR-006",
+      "titulo": "Estrategia de proteccion DOM / destruccion en menos de 50ms",
+      "eleccion": "Listener unico centralizado triggerKillSwitch con innerHTML='' sincrono + pantalla de bloqueo"
+    },
+    {
+      "id": "ADR-007",
+      "titulo": "Estrategia de resiliencia de red para subida de evidencia",
+      "eleccion": "Buffer en memoria + reconexion WS con backoff exponencial, reenvio en orden"
+    },
+    {
+      "id": "ADR-008",
+      "titulo": "Marca de agua dinamica",
+      "eleccion": "Overlay HTML/CSS absoluto semitransparente + MutationObserver de re-inyeccion"
+    },
+    {
+      "id": "ADR-009",
+      "titulo": "Estructura de carpetas del monorepo y gestor de paquetes",
+      "eleccion": "pnpm workspaces: packages/shared, packages/backend, packages/frontend"
+    }
+  ],
+  "modulos_completados": [
+    "Scaffold fisico del monorepo (package.json raiz, pnpm-workspace.yaml, tsconfig.base.json, .gitignore)",
+    "packages/shared: contratos ws-protocol.ts (framing ADR-003) y session.ts (SessionState/InfractionReason ADR-004/ADR-006)",
+    "packages/backend: bootstrap server.ts (Fastify + @fastify/websocket), demux ws/exam-socket.ts, SessionRegistry en memoria (exam-engine/session-registry.ts), SessionRecorder con WriteStream por sesion (ingest/session-recorder.ts)",
+    "packages/frontend: index.html, main.ts, ui/app.ts (mount point minimo, sin logica de Fase 1 aun)"
+  ],
+  "archivos_generados": [
+    "arquitectura_proctoring.md",
+    "bitacora_decisiones.md",
+    "estado_actual.json",
+    "package.json",
+    "pnpm-workspace.yaml",
+    "tsconfig.base.json",
+    ".gitignore",
+    "packages/shared/package.json",
+    "packages/shared/tsconfig.json",
+    "packages/shared/src/ws-protocol.ts",
+    "packages/shared/src/session.ts",
+    "packages/shared/src/index.ts",
+    "packages/backend/package.json",
+    "packages/backend/tsconfig.json",
+    "packages/backend/src/server.ts",
+    "packages/backend/src/ws/exam-socket.ts",
+    "packages/backend/src/exam-engine/session-registry.ts",
+    "packages/backend/src/ingest/session-recorder.ts",
+    "packages/frontend/package.json",
+    "packages/frontend/tsconfig.json",
+    "packages/frontend/index.html",
+    "packages/frontend/src/main.ts",
+    "packages/frontend/src/ui/app.ts"
+  ],
+  "entorno": {
+    "node": "v24.22.1 (instalado via nvm en ~/.config/nvm, sin sudo)",
+    "npm": "11.19.1",
+    "pnpm": "9.0.0 (via corepack)",
+    "nota_puerto": "El puerto 3001 esta ocupado por otro servicio preexistente del sistema; el backend se valido en PORT=3987. Usar variable de entorno PORT para evitar colision en este equipo."
+  },
+  "scaffold_validado": {
+    "fecha": "2026-10-21",
+    "shared_typecheck": "OK",
+    "shared_build": "OK",
+    "backend_typecheck": "OK",
+    "backend_build": "OK",
+    "backend_arranque_real": "OK (GET /health -> {status:ok} en PORT=3987)",
+    "frontend_typecheck": "OK",
+    "frontend_build_vite": "OK",
+    "fix_aplicado": "packages/shared/package.json no tenia 'typescript' en devDependencies; se agrego y se re-instalo."
+  },
+  "modulos_completados_adicionales": [
+    "exam-engine/question-flow.ts: motor de entrega secuencial de preguntas, server-side truth (ADR-004/ADR-010/ADR-011/ADR-012). Validado funcionalmente con cliente WS de prueba: flujo auth->5 preguntas aleatorizadas->exam-completed, y flujo de expiracion por timeout (preguntas con secondsAllowed=1 avanzan solas sin que el cliente responda).",
+    "exam-engine/question-bank.ts: carga del banco de preguntas desde packages/backend/questions/exam-default.json (ADR-011)",
+    "exam-engine/checkpoint-store.ts: persistencia de checkpoints en checkpoints/<sessionId>.json, sobrescritura completa por transicion (ADR-010)",
+    "ws/exam-socket.ts actualizado para delegar toda la logica de examen a questionFlowEngine (auth, next-question-request, answer-submit, infraction-alert)",
+    "shared/src/ws-protocol.ts: se agrego el tipo de mensaje 'exam-completed' (finalizacion exitosa, distinto de 'session-terminated' por infraccion)"
+  ],
+  "fase1_lobby_completada": "mountLobby implementado (matricula, screen.isExtended, anti-camara virtual, getUserMedia, getDisplayMedia con displaySurface==monitor, fullscreen). Validado visualmente en Chrome real: diseno OK, check de monitor unico corre y pasa; permisos de camara/pantalla requieren dialogo nativo del navegador que la automatizacion no puede completar (limitacion esperada, no bug).",
+  "fase2_examen_completada": "mountExam implementado conectando: ws-client (ADR-003/007, reconexion con backoff), composite-stream (canvas combinando pantalla+camara en un solo MediaStream para respetar ADR-002), EvidenceRecorder (chunks cada 4s), kill-switch-sensors (visibilitychange/blur/fullscreenchange/track.onended/atajos bloqueados), triggerKillSwitch (ADR-006), watermark (ADR-008), VisionPipeline con @mediapipe/tasks-vision (ADR-005, FaceLandmarker+ObjectDetector cada 750ms). Backend: ruta POST /api/infraction-beacon agregada para el respaldo de sendBeacon (Fase 4). Build de Vite exitoso (19 modulos, incluye bundle de MediaPipe). Probado sirviendo la pagina en Chrome real sin errores de consola.",
+  "siguiente_tarea_pendiente": "Pendiente opcional: probar manualmente en un navegador con camara/pantalla reales para verificar el flujo end-to-end completo (lobby -> examen -> kill switch) con permisos concedidos por un humano. El proyecto ya cubre todos los modulos principales descritos en el enunciado original.",
+  "notas": "Protocolo Human-in-the-Loop activo: no se escribe codigo de ningun modulo sin confirmacion previa del usuario sobre la decision arquitectonica correspondiente."
+}

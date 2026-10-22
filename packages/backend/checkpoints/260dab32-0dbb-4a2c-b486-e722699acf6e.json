@@ -1,0 +1,54 @@
+{
+  "sessionId": "260dab32-0dbb-4a2c-b486-e722699acf6e",
+  "state": {
+    "sessionId": "260dab32-0dbb-4a2c-b486-e722699acf6e",
+    "studentId": "0000",
+    "status": "terminated-by-infraction",
+    "questionOrder": [
+      "q-001",
+      "q-005",
+      "q-004",
+      "q-002",
+      "q-003"
+    ],
+    "choiceOrderByQuestionId": {
+      "q-001": [
+        3,
+        0,
+        2,
+        1
+      ],
+      "q-005": [
+        1,
+        0,
+        2,
+        3
+      ],
+      "q-004": [
+        2,
+        1,
+        3,
+        0
+      ],
+      "q-002": [
+        3,
+        0,
+        1,
+        2
+      ],
+      "q-003": [
+        3,
+        1,
+        2,
+        0
+      ]
+    },
+    "currentQuestionIndex": 0,
+    "currentQuestionStartedAtMs": 1792623686872,
+    "answers": [],
+    "terminationReason": "FACE_ABSENT",
+    "createdAtMs": 1792623686569,
+    "lastCheckpointAtMs": 1792623739903
+  },
+  "persistedAtMs": 1792623739903
+}
